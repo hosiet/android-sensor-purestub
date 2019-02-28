@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2015 Anna-Lena Marx
+ * Copyright (C) 2019 Boyuan Yang <by.yang@pitt.edu>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #define LOG_TAG "PureStubSensors"
 
 #include <errno.h>
@@ -39,11 +55,44 @@ static int sensors = (sizeof (sSensorsList) / sizeof (sensors_t));
 
 /**
  * Returns sensor_t struct describing available sensors
+ *
+ * @param module seems to be the pointer to HAL_MODULE_INFO_SYM
+ * @param list Output variable, provide a pointer to a list of sensors_t.
+ * @return Number of sensors on the list
  * */
 static int sensors__get_sensors_list(struct sensors_module_t* module, struct sensor_t const** list) {
     *list = sSensorsList;
     return sensors;
 }
+
+/**
+ * The implementation of activate() for accelerometer
+ * */
+static int sensor_accelerometer__activate(struct sensors_poll_device_t *dev, int sensor_handle, int enabled) {
+    // TODO Activate the accelerometer
+    return 0;
+}
+
+static int sensor_accelerometer__batch(struct sensors_poll_device_1* dev,
+        int sensor_handle,
+        int flags,
+        int64_t sampling_period_ns,
+        int64_t max_report_latency_ns) {
+    // TODO finish batch function
+    return 0;
+}
+
+static int sensor_accelerometer__flush(struct sensors_poll_device_1* dev, int sensor_handle) {
+    // TODO finish flush function
+    return 0;
+}
+
+static int sensor_accelerometer__poll(struct sensors_poll_device_t *dev, sensors_event_t* data, int count) {
+    // TODO FIXME return a data
+    return -1;
+}
+    
+
 
 /**
  * Set sensor operation mode, not supported so currently always returns -EINVAL
@@ -71,7 +120,7 @@ static struct hw_module_methods_t sensors_module_methods = {
  * Note: hw_module_t (type of common) was defined in <hardware/hardware.h>.
  */
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
-    common: {
+common: {                                  /* type: hw_module_t */
         tag: HARDWARE_MODULE_TAG,
         version_major: 1,
         version_minor: 0,
@@ -85,3 +134,56 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
     get_sensors_list: sensors__get_sensors_list,
     set_operation_mode: sensors__set_operation_mode,
 };
+
+
+/** Using a C++-Specific way to handle poll context! */
+struct sensors_poll_context_t {
+    sensors_poll_device_1_t device; /* where the hw_device_t* pointer points to */
+
+    sensors_poll_context_t();
+    ~sensors_poll_context_t();
+    int activate(int handle, int enabled);
+    int setDelay(int handle, int64_t ns);
+    int pollEvents(sensors_event_t* data, int count);
+    int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
+
+    bool isValid() { return mInitialized; };
+    int flush(int handle);
+
+private:
+    bool mInitialized;
+    bool mAccelerometerEnabled;
+};
+
+sensors_poll_context_t::sensors_poll_context_t() {
+    mInitialized = false;
+    // TODO init works
+    mAccelerometerEnabled = false;
+    mInitialized = true;
+}
+
+sensors_poll_context_t::~sensors_poll_context_t() {
+    // TODO takedown works
+    mInitialized = false;
+}
+
+int sensors_poll_context_t::activate(int handle, int enabled) {
+}
+
+
+
+static int open_sensors (const struct hw_module_t* module, const char* id, struct hw_device_t ** device) {
+    int status = -EINVAL;
+    // TODO Init the device
+    sensors_poll_context_t *dev = new sensors_poll_context_t();
+    /* Check if we successfully initialized the device */
+    if (! dev->isValid()) {
+        return status;
+    }
+    /* Set the whole sensors_poll_device_1_t structure to be 0 */
+    memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));  // TODO FIXME _t or not?
+    /* Assign value to dev->device, which is ??? */
+    status = 0;
+
+    return status;
+}
