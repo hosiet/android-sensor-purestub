@@ -14,8 +14,6 @@
 __BEGIN_DECLS
 
 
-
-
 __END_DECLS
 
 #endif  /* ANDROID_SENSORS_H */

@@ -21,32 +21,37 @@
 #include <hardware/sensors.h>
 
 #include "sensors.h"
+#include "purestubsensors.h"
+
+/* Macros used */
+#define PURESTUB_SENSORS_ACCELERATION_HANDLE (0)
 
 
 /* Real code below */
 
+/** Function that implement the open() function for the sensor */
 static int open_sensors (const struct hw_module_t* module, const char* id, struct hw_device_t ** device);
 
 /**
  * The sensor_t struct, describing all available sensors
  * */
-struct sensors_t sSensorsList[] = {
+static struct sensors_t sSensorsList[] = {
     {
-        "Pure Stub 3-axis Accelerometer",  // const char* name;
-        "University of Pittsburgh",        // const char* vendor;
-        1,                                 // int         version,
-        SENSORS_ACCELERATION_HANDLE,       // int         handle;
-        SENSOR_TYPE_ACCELEROMETER,         // int         type;
-        (GRAVITY_EARTH * 16.0f),           // float       maxRange;
-        (GRAVITY_EARTH * 16.0f) / 4096.0f, // float       resolution;
-        0.0001f,                           // float       power;
-        10000,                             // int32_t     minDelay;    // in ms
-        0,                                 // uint32_t    fifoReservedEventCount; // TODO
-        0,                                 // uint32_t    fifoMaxEventCount;      // TODO
-        0,                                 // const char* stringType;             // TODO
-        0,                                 // const char* requiredPermission;
-        0,                                 // int??_t     maxDelay;               // TODO
-        0,                                 // uint??_t    flags;                  // TODO
+        "Pure Stub 3-axis Accelerometer",      // const char* name;
+        "University of Pittsburgh",            // const char* vendor;
+        1,                                     // int         version,
+        PURESTUB_SENSORS_ACCELERATION_HANDLE,  // int         handle;
+        SENSOR_TYPE_ACCELEROMETER,             // int         type;
+        (GRAVITY_EARTH * 16.0f),               // float       maxRange;
+        (GRAVITY_EARTH * 16.0f) / 4096.0f,     // float       resolution;
+        0.0001f,                               // float       power;
+        10000,                                 // int32_t     minDelay;    // in ms
+        0,                                     // uint32_t    fifoReservedEventCount; // TODO
+        0,                                     // uint32_t    fifoMaxEventCount;      // TODO
+        0,                                     // const char* stringType;             // TODO
+        0,                                     // const char* requiredPermission;
+        0,                                     // int??_t     maxDelay;               // TODO
+        0,                                     // uint??_t    flags;                  // TODO
         { 0 },
     },
 };
@@ -64,34 +69,6 @@ static int sensors__get_sensors_list(struct sensors_module_t* module, struct sen
     *list = sSensorsList;
     return sensors;
 }
-
-/**
- * The implementation of activate() for accelerometer
- * */
-static int sensor_accelerometer__activate(struct sensors_poll_device_t *dev, int sensor_handle, int enabled) {
-    // TODO Activate the accelerometer
-    return 0;
-}
-
-static int sensor_accelerometer__batch(struct sensors_poll_device_1* dev,
-        int sensor_handle,
-        int flags,
-        int64_t sampling_period_ns,
-        int64_t max_report_latency_ns) {
-    // TODO finish batch function
-    return 0;
-}
-
-static int sensor_accelerometer__flush(struct sensors_poll_device_1* dev, int sensor_handle) {
-    // TODO finish flush function
-    return 0;
-}
-
-static int sensor_accelerometer__poll(struct sensors_poll_device_t *dev, sensors_event_t* data, int count) {
-    // TODO FIXME return a data
-    return -1;
-}
-    
 
 
 /**
@@ -111,7 +88,6 @@ static struct hw_module_methods_t sensors_module_methods = {
 };
 
 
-
 /**
  * Every hardware module must have a data structure named HAL_MODULE_INFO_SYM
  * and the fields of this data structure must begin with hw_module_t
@@ -126,8 +102,8 @@ common: {                                  /* type: hw_module_t */
         version_minor: 0,
         id: SENSOR_HARDWARE_MODULE_ID,
         name: "Pure Stub Sensor module",
-        author: "Boyuan Yang",
-        methods: &sensors_module_methods,      // TODO
+        author: "Boyuan Yang"
+        methods: &sensors_module_methods,
         dso: NULL,                             // TODO
         reserved: {0},
     },
@@ -172,18 +148,38 @@ int sensors_poll_context_t::activate(int handle, int enabled) {
         return -EINVAL;
     }
     // TODO activate the sensor
+    if (handle == PURESTUB_SENSORS_ACCELERATION_HANDLE) {
+        if (enabled && (mAccelerometerEnabled == false)) {
+            mAccelerometerEnabled = true;
+        } elif (!enabled && (mAccelerometerEnabled == true) {
+            mAccelerometerEnabled = false;
+        }
+    } else {
+        // handle not recognized
+        ;
+    }
     int err = 0;
     return err;
 }
 
 int sensors_poll_context_t::setDelay(int handle, int64_t ns) {
-    // TODO FIXME
-    return -1;
+    // In API 1.3+, this function will not be called anymore.
+    return 0;
 }
 
+/**
+ * poll the Events.
+ *
+ * This function must be blocked till we have a usable data.
+ *
+ * Right now we are not blocking it since it's a sensor stub. We generate
+ * some random(?) data?
+ * */
 int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
+    int numEvents = 0;
     // TODO FIXME
-    return -1;
+    // TODO Distinguish between different devices
+    return numEvents;
 }
 
 int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout) {
@@ -203,6 +199,7 @@ int sensors_poll_context_t::flush(int handle) {
  * The real actions are wrapped in the methods of sensors_poll_context_t class.
  * */
 
+/** Close the device only, one single device */
 static int poll__close (struct hw_device_t *dev) {
     sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
     if (ctx) {

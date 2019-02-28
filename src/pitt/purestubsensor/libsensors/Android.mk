@@ -21,7 +21,7 @@ LOCAL_CFLAGS := \
     -Wall
 
 LOCAL_SRC_FILES := \
-    SensorBase.cpp \
+    purestubsensors.cpp \
     sensors.cpp
 
 LOCAL_SHARED_LIBRARIES := liblog
