@@ -168,8 +168,78 @@ sensors_poll_context_t::~sensors_poll_context_t() {
 }
 
 int sensors_poll_context_t::activate(int handle, int enabled) {
+    if (!mInitialized) {
+        return -EINVAL;
+    }
+    // TODO activate the sensor
+    int err = 0;
+    return err;
 }
 
+int sensors_poll_context_t::setDelay(int handle, int64_t ns) {
+    // TODO FIXME
+    return -1;
+}
+
+int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
+    // TODO FIXME
+    return -1;
+}
+
+int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout) {
+    // Do nothing at this moment
+    return 0;
+}
+
+int sensors_poll_context_t::flush(int handle) {
+    // Do nothing at this moment
+    return 0;
+}
+
+/* ********************************************************** */
+/*
+ * Static wrapper for poll activities.
+ *
+ * The real actions are wrapped in the methods of sensors_poll_context_t class.
+ * */
+
+static int poll__close (struct hw_device_t *dev) {
+    sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
+    if (ctx) {
+        delete ctx;
+    }
+    return 0;
+}
+
+static int poll__activate (struct sensors_poll_device_t *dev, int handle, int enabled) {
+    sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
+    return ctx->activate(handle, enabled);
+}
+
+static int poll__setDelay (struct sensors_poll_device_t *dev, int handle, int64_t ns) {
+    sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
+    int s = ctx->setDelay(handle, ns);
+    return s;
+}
+
+static int poll__poll (struct sensors_poll_device_t *dev, sensors_event_t* data, int count) {
+    sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
+    return ctx->pollEvents(data, count);
+}
+
+static int poll__batch (struct sensors_poll_device_1 *dev, int handle, int flags,
+            int64_t period_ns, int64_t timeout) {
+    sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
+    return ctx->batch(handle, flags, period_ns, timeout);
+}
+
+static int poll__flush (struct sensors_poll_device_1 *dev, int handle) {
+    sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
+    return ctx->flush(handle);
+}
+
+
+/* ENDOF Static Wrappers ********************************************************/
 
 
 static int open_sensors (const struct hw_module_t* module, const char* id, struct hw_device_t ** device) {
@@ -183,7 +253,19 @@ static int open_sensors (const struct hw_module_t* module, const char* id, struc
     /* Set the whole sensors_poll_device_1_t structure to be 0 */
     memset(&dev->device, 0, sizeof(sensors_poll_device_1_t));  // TODO FIXME _t or not?
     /* Assign value to dev->device, which is ??? */
-    status = 0;
+    dev->device.common.tag = HARDWARE_DEVICE_TAG;
+    dev->device.common.version = SENSORS_DEVICE_API_VERSION_1_3;
+    dev->device.common.module = const_cast<hw_module_t*>(module);
+    dev->device.common.close = poll__close;
+    dev->device.activate = poll__activate;
+    dev->device.setDelay = poll__setDelay;
+    dev->device.poll = poll__poll;
+    dev->device.batch = poll__batch;
+    dev->device.flush = poll__flush;
 
+    *device = &dev->device.common;
+
+    /* Finish all */
+    status = 0;
     return status;
 }
