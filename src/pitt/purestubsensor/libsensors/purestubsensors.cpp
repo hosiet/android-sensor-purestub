@@ -17,3 +17,7 @@
 
 #include "sensors.h"
 #include "purestubsensors.h"
+
+int getEventAccelerometer(sensors_event_t *data_single, int serial) {
+
+}

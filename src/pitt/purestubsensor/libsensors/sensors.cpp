@@ -23,9 +23,6 @@
 #include "sensors.h"
 #include "purestubsensors.h"
 
-/* Macros used */
-#define PURESTUB_SENSORS_ACCELERATION_HANDLE (0)
-
 
 /* Real code below */
 
@@ -177,8 +174,24 @@ int sensors_poll_context_t::setDelay(int handle, int64_t ns) {
  * */
 int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
     int numEvents = 0;
+    int i = 0;
+    sensors_event_t event_result = { 0 };
+    int result = 0;
+
     // TODO FIXME
     // TODO Distinguish between different devices
+    for (i = 0; i < count; i++) {
+        // fill in the sensors_event_t array
+        // Struct of sensors_event_t is defined at
+        // https://android.googlesource.com/platform/hardware/libhardware/+/master/include/hardware/sensors.h
+        // XXX: Now we only return 1 event per call of pollEvents.
+        result = getEventAccelerometer(&event_result, i);
+        if (result == 0) {
+            numEvents += 1;
+            data[i] = event_result;
+        }
+    }
+
     return numEvents;
 }
 
