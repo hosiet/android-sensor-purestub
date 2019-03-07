@@ -15,9 +15,39 @@
  * limitations under the License.
  */
 
+#include <ctime>
+#include <cstdint>
+#include <cinttypes>
+
 #include "sensors.h"
 #include "purestubsensors.h"
 
-int getEventAccelerometer(sensors_event_t *data_single, int serial) {
+#define _BILLION (1000000000L)
 
+int getEventAccelerometer(sensors_event_t *data_single, int serial) {
+    struct timespec t_spec = { 0 };
+    uint64_t all;
+    long int ns;
+    time_t sec;
+    sensors_vec_t sensor_data = { 0 };
+
+    if (data_single == NULL) {
+        return -EINVAL;
+    }
+
+    /* Fill in sensor data first */
+    data_single->version = (int32_t) sizeof(struct sensors_event_t);
+    data_single->sensor = (int32_t) 13;
+    data_single->type = SENSOR_TYPE_ACCELEROMETER;
+    clock_gettime(CLOCK_REALTIME, &t_spec);
+    sec = t_spec.tv_sec;
+    ns = spec.tv_nsec;
+    all = (uint64_t) sec * _BILLION + (uint64_t) ns;
+    //data_single->timestamp = (int64_t) all;
+    data_single->timestamp = 0;
+    data_single->acceleration.x = 1.1;
+    data_single->acceleration.y = 2.2;
+    data_single->acceleration.z = 3.3;
+    
+    return 0;
 }
