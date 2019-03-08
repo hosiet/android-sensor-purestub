@@ -22,7 +22,6 @@
 #include <hardware/sensors.h>
 
 
-
 #include "sensors.h"
 #include "purestubsensors.h"
 

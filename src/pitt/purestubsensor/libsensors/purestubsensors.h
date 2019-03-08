@@ -17,7 +17,10 @@
 #ifndef PURESTUB_SENSORS_H
 #define PURESTUB_SENSORS_H
 
+#ifndef LOG_TAG
 #define LOG_TAG "PureStubSensors"
+#endif
+
 #include <hardware/hardware.h>
 #include <hardware/sensors.h>
 

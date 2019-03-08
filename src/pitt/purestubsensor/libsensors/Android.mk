@@ -17,7 +17,7 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_CFLAGS := \
-    -DLOG_TAG=\"Sensors\" \
+    -DLOG_TAG=\"PureStubSensors\" \
     -Wall
 
 LOCAL_SRC_FILES := \
