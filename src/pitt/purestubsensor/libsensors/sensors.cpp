@@ -32,7 +32,7 @@ static int open_sensors (const struct hw_module_t* module, const char* id, struc
 /**
  * The sensor_t struct, describing all available sensors
  * */
-static struct sensors_t sSensorsList[] = {
+static struct sensor_t sSensorsList[] = {
     {
         "Pure Stub 3-axis Accelerometer",      // const char* name;
         "University of Pittsburgh",            // const char* vendor;
@@ -53,13 +53,13 @@ static struct sensors_t sSensorsList[] = {
     },
 };
 
-static int sensors = (sizeof (sSensorsList) / sizeof (sensors_t));
+static int sensors = (sizeof (sSensorsList) / sizeof (sensor_t));
 
 /**
  * Returns sensor_t struct describing available sensors
  *
  * @param module seems to be the pointer to HAL_MODULE_INFO_SYM
- * @param list Output variable, provide a pointer to a list of sensors_t.
+ * @param list Output variable, provide a pointer to a list of sensor_t.
  * @return Number of sensors on the list
  * */
 static int sensors__get_sensors_list(struct sensors_module_t* module, struct sensor_t const** list) {
