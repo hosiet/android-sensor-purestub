@@ -16,9 +16,12 @@
  */
 #define LOG_TAG "PureStubSensors"
 
-#include <errno.h>
+#include <cerrno>
+#include <cstring>
 
 #include <hardware/sensors.h>
+
+
 
 #include "sensors.h"
 #include "purestubsensors.h"
