@@ -148,7 +148,7 @@ int sensors_poll_context_t::activate(int handle, int enabled) {
     if (handle == PURESTUB_SENSORS_ACCELERATION_HANDLE) {
         if (enabled && (mAccelerometerEnabled == false)) {
             mAccelerometerEnabled = true;
-        } elif (!enabled && (mAccelerometerEnabled == true)) {
+        } else if (!enabled && (mAccelerometerEnabled == true)) {
             mAccelerometerEnabled = false;
         }
     } else {
