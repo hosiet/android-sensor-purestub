@@ -104,7 +104,7 @@ struct sensors_module_t HAL_MODULE_INFO_SYM = {
         .author = "Boyuan Yang",
         .methods = &sensors_module_methods,
         .dso = NULL,                             // TODO
-        .reserved = {0},
+        .reserved = {},
     },
     .get_sensors_list = sensors__get_sensors_list,
     .set_operation_mode = sensors__set_operation_mode,
@@ -177,7 +177,7 @@ int sensors_poll_context_t::setDelay(int handle, int64_t ns) {
 int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
     int numEvents = 0;
     int i = 0;
-    sensors_event_t event_result = { 0 };
+    struct sensors_event_t event_result = {};
     int result = 0;
 
     // TODO FIXME

@@ -25,11 +25,10 @@
 #define _BILLION (1000000000L)
 
 int getEventAccelerometer(sensors_event_t *data_single, int serial) {
-    struct timespec t_spec = { 0 };
+    struct timespec t_spec = {};
     uint64_t all;
     long int ns;
     time_t sec;
-    sensors_vec_t sensor_data = { 0 };
 
     if (data_single == NULL) {
         return -EINVAL;
