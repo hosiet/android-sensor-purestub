@@ -94,18 +94,18 @@ static struct hw_module_methods_t sensors_module_methods = {
  */
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
 common: {                                  /* type: hw_module_t */
-        tag: HARDWARE_MODULE_TAG,
-        version_major: 1,
-        version_minor: 0,
-        id: SENSOR_HARDWARE_MODULE_ID,
-        name: "Pure Stub Sensor module",
-        author: "Boyuan Yang"
-        methods: &sensors_module_methods,
-        dso: NULL,                             // TODO
-        reserved: {0},
+        .tag: HARDWARE_MODULE_TAG,
+        .version_major: 1,
+        .version_minor: 0,
+        .id: SENSOR_HARDWARE_MODULE_ID,
+        .name: "Pure Stub Sensor module",
+        .author: "Boyuan Yang"
+        .methods: &sensors_module_methods,
+        .dso: NULL,                             // TODO
+        .reserved: {0},
     },
-    get_sensors_list: sensors__get_sensors_list,
-    set_operation_mode: sensors__set_operation_mode,
+    .get_sensors_list: sensors__get_sensors_list,
+    .set_operation_mode: sensors__set_operation_mode,
 };
 
 
