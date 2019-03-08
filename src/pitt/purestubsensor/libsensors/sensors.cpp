@@ -71,7 +71,7 @@ static int sensors__get_sensors_list(struct sensors_module_t* module, struct sen
 /**
  * Set sensor operation mode, not supported so currently always returns -EINVAL
  * */
-staic int sensors__set_operation_mode(unsigned int mode) {
+static int sensors__set_operation_mode(unsigned int mode) {
     if (mode == 0) {
         return 0;
     } else {
@@ -81,7 +81,7 @@ staic int sensors__set_operation_mode(unsigned int mode) {
 
 
 static struct hw_module_methods_t sensors_module_methods = {
-    open: open_sensors,
+    .open = open_sensors,
 };
 
 
@@ -93,19 +93,19 @@ static struct hw_module_methods_t sensors_module_methods = {
  * Note: hw_module_t (type of common) was defined in <hardware/hardware.h>.
  */
 struct sensors_module_t HAL_MODULE_INFO_SYM = {
-common: {                                  /* type: hw_module_t */
-        .tag: HARDWARE_MODULE_TAG,
-        .version_major: 1,
-        .version_minor: 0,
-        .id: SENSOR_HARDWARE_MODULE_ID,
-        .name: "Pure Stub Sensor module",
-        .author: "Boyuan Yang"
-        .methods: &sensors_module_methods,
-        .dso: NULL,                             // TODO
-        .reserved: {0},
+.common = {                                  /* type: hw_module_t */
+        .tag = HARDWARE_MODULE_TAG,
+        .version_major = 1,
+        .version_minor = 0,
+        .id = SENSOR_HARDWARE_MODULE_ID,
+        .name = "Pure Stub Sensor module",
+        .author = "Boyuan Yang",
+        .methods = &sensors_module_methods,
+        .dso = NULL,                             // TODO
+        .reserved = {0},
     },
-    .get_sensors_list: sensors__get_sensors_list,
-    .set_operation_mode: sensors__set_operation_mode,
+    .get_sensors_list = sensors__get_sensors_list,
+    .set_operation_mode = sensors__set_operation_mode,
 };
 
 

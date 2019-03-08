@@ -41,7 +41,7 @@ int getEventAccelerometer(sensors_event_t *data_single, int serial) {
     data_single->type = SENSOR_TYPE_ACCELEROMETER;
     clock_gettime(CLOCK_REALTIME, &t_spec);
     sec = t_spec.tv_sec;
-    ns = spec.tv_nsec;
+    ns = t_spec.tv_nsec;
     all = (uint64_t) sec * _BILLION + (uint64_t) ns;
     //data_single->timestamp = (int64_t) all;
     data_single->timestamp = 0;
