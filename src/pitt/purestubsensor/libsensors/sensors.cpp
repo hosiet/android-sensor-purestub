@@ -21,6 +21,7 @@
 
 #include <hardware/sensors.h>
 
+#include <cutils/log.h>
 
 #include "sensors.h"
 #include "purestubsensors.h"
@@ -65,6 +66,7 @@ static int sensors = (sizeof (sSensorsList) / sizeof (sensor_t));
  * @return Number of sensors on the list
  * */
 static int sensors__get_sensors_list(struct sensors_module_t* module, struct sensor_t const** list) {
+    ALOGE("sensors__get_sensors_list was called!");
     *list = sSensorsList;
     return sensors;
 }
