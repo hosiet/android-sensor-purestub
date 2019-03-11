@@ -259,6 +259,7 @@ static int poll__flush (struct sensors_poll_device_1 *dev, int handle) {
 static int open_sensors (const struct hw_module_t* module, const char* id, struct hw_device_t ** device) {
     int status = -EINVAL;
     // TODO Init the device
+    ALOGE("PITT: open_sensors was called...");
     sensors_poll_context_t *dev = new sensors_poll_context_t();
     /* Check if we successfully initialized the device */
     if (! dev->isValid()) {
