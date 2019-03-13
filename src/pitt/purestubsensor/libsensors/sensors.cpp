@@ -54,6 +54,24 @@ static struct sensor_t sSensorsList[] = {
         0,                                     // uint??_t    flags;                  // TODO
         { 0 },
     },
+    {
+        "Pure Stub Gyroscope",
+        "University of Pittsburgh",
+        1,
+        PURESTUB_SENSORS_GYROSCOPE_HANDLE,
+        SENSOR_TYPE_GYROSCOPE,
+        (17.453293f),
+        (0.0001f),
+        (0.0001f),
+        5000,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        { 0 },
+    }
 };
 
 static int sensors = (sizeof (sSensorsList) / sizeof (sensor_t));
