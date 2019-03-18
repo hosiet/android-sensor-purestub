@@ -204,6 +204,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
 
     // TODO FIXME
     // TODO Distinguish between different devices
+    // sensors_event_t has sensor identifier???
     for (i = 0; i < count; i++) {
         // fill in the sensors_event_t array
         // Struct of sensors_event_t is defined at
@@ -257,6 +258,7 @@ static int poll__setDelay (struct sensors_poll_device_t *dev, int handle, int64_
 }
 
 static int poll__poll (struct sensors_poll_device_t *dev, sensors_event_t* data, int count) {
+    ALOGE("PITT: poll_poll was called...");
     sensors_poll_context_t *ctx = (sensors_poll_context_t *)dev;
     return ctx->pollEvents(data, count);
 }
@@ -280,6 +282,8 @@ static int open_sensors (const struct hw_module_t* module, const char* id, struc
     int status = -EINVAL;
     // TODO Init the device
     ALOGE("PITT: open_sensors was called...");
+    ALOGE("PITT: name char is:");
+    ALOGE(id);
     sensors_poll_context_t *dev = new sensors_poll_context_t();
     /* Check if we successfully initialized the device */
     if (! dev->isValid()) {
