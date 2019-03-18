@@ -74,6 +74,6 @@ int getEventAccelerometer(sensors_event_t *data_single, int serial) {
     data_single->acceleration.x = 1.1;
     data_single->acceleration.y = 2.2;
     data_single->acceleration.z = 3.3;
-    
+
     return 0;
 }
