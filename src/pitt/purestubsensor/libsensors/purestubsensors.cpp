@@ -37,7 +37,7 @@ int getEventGyroscope(sensors_event_t *data_single, int serial) {
     /* Fill in sensor data */
     data_single->version = (int32_t) sizeof(struct sensors_event_t);
     //data_single->sensor = (int32_t) PURESTUB_SENSORS_IDENTIFIER_GYROSCOPE;
-    data_single->sensor = (int32_t) PURESTUB_SENSORS_ACCELERATION_HANDLE;
+    data_single->sensor = (int32_t) PURESTUB_SENSORS_GYROSCOPE_HANDLE;
     data_single->type = SENSOR_TYPE_GYROSCOPE;
     clock_gettime(CLOCK_REALTIME, &t_spec);
     sec = t_spec.tv_sec;
@@ -45,9 +45,17 @@ int getEventGyroscope(sensors_event_t *data_single, int serial) {
     all = (uint64_t) sec * _BILLION + (uint64_t) ns;
     //data_single->timestamp = (int64_t) all;
     data_single->timestamp = 0;
-    data_single->acceleration.x = 1.1f;
-    data_single->acceleration.y = 2.2f;
-    data_single->acceleration.z = 3.3f;
+    /* Explicitly provide two sets of different data
+     * in order to trigger acceleration data change */
+    if (ns % 2 == 0) {
+        data_single->gyro.x = 1.1f;
+        data_single->gyro.y = 2.2f;
+        data_single->gyro.z = 3.3f;
+    } else {
+        data_single->gyro.x = 0.5f;
+        data_single->gyro.y = 0.6f;
+        data_single->gyro.z = 0.7f;
+    }
     
     return 0;
 }
@@ -73,9 +81,17 @@ int getEventAccelerometer(sensors_event_t *data_single, int serial) {
     all = (uint64_t) sec * _BILLION + (uint64_t) ns;
     //data_single->timestamp = (int64_t) all;
     data_single->timestamp = 0;
-    data_single->acceleration.x = 1.1;
-    data_single->acceleration.y = 2.2;
-    data_single->acceleration.z = 3.3;
+    /* Explicitly provide two sets of different data
+     * in order to trigger acceleration data change */
+    if (ns % 2 == 0) {
+        data_single->acceleration.x = 1.1f;
+        data_single->acceleration.y = 2.2f;
+        data_single->acceleration.z = 3.3f;
+    } else {
+        data_single->acceleration.x = 5.5f;
+        data_single->acceleration.y = 6.6f;
+        data_single->acceleration.z = 7.7f;
+    }
 
     return 0;
 }
