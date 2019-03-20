@@ -282,8 +282,7 @@ static int open_sensors (const struct hw_module_t* module, const char* id, struc
     int status = -EINVAL;
     // TODO Init the device
     ALOGE("PITT: open_sensors was called...");
-    ALOGE("PITT: name char is:");
-    ALOGE(id);
+    ALOGE("PITT: name char is: %s", id);
     sensors_poll_context_t *dev = new sensors_poll_context_t();
     /* Check if we successfully initialized the device */
     if (! dev->isValid()) {
