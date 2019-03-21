@@ -25,5 +25,6 @@
 #include <hardware/sensors.h>
 
 int getEventAccelerometer(sensors_event_t *data_single, int serial);
+int getEventGyroscope(sensors_event_t *data_single, int serial);
 
 #endif /* PURESTUB_SENSORS_H */
