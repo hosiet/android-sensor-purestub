@@ -150,6 +150,8 @@ struct sensors_poll_context_t {
 private:
     bool mInitialized;
     bool mAccelerometerEnabled;
+
+    bool mIfGyroOut;
 };
 
 sensors_poll_context_t::sensors_poll_context_t() {
@@ -157,6 +159,7 @@ sensors_poll_context_t::sensors_poll_context_t() {
     // TODO init works
     mAccelerometerEnabled = false;
     mInitialized = true;
+    mIfGyroOut = true;
 }
 
 sensors_poll_context_t::~sensors_poll_context_t() {
@@ -210,7 +213,13 @@ int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
         // Struct of sensors_event_t is defined at
         // https://android.googlesource.com/platform/hardware/libhardware/+/master/include/hardware/sensors.h
         // XXX: Now we only return 1 event per call of pollEvents.
-        result = getEventAccelerometer(&event_result, i);
+        if (mIfGyroOut) {
+            result = getEventGyroscope(&event_result, i);
+        } else {
+            result = getEventAccelerometer(&event_result, i);
+        }
+        mIfGyroOut = ! mIfGyroOut;
+
         if (result == 0) {
             numEvents += 1;
             data[i] = event_result;
