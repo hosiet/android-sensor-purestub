@@ -27,6 +27,8 @@
 int getEventAccelerometer(sensors_event_t *data_single, int serial);
 int getEventGyroscope(sensors_event_t *data_single, int serial);
 int getEventGameRotationVector(sensors_event_t *data_single, int serial);
+int getEventRotationVector(sensors_event_t *data_single, int serial);
+
 
 
 #endif /* PURESTUB_SENSORS_H */

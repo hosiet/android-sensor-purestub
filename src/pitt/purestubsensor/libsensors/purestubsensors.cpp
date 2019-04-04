@@ -72,7 +72,6 @@ int getEventAccelerometer(sensors_event_t *data_single, int serial) {
 
     /* Fill in sensor data first */
     data_single->version = (int32_t) sizeof(struct sensors_event_t);
-    //data_single->sensor = (int32_t) PURESTUB_SENSORS_IDENTIFIER_ACCELEROMETER;
     data_single->sensor = (int32_t) PURESTUB_SENSORS_ACCELERATION_HANDLE;
     data_single->type = SENSOR_TYPE_ACCELEROMETER;
     clock_gettime(CLOCK_REALTIME, &t_spec);
@@ -98,6 +97,7 @@ int getEventAccelerometer(sensors_event_t *data_single, int serial) {
 
 
 int getEventGameRotationVector(sensors_event_t *data_single, int serial) {
+
     struct timespec t_spec = {};
     uint64_t all;
     long int ns;
@@ -111,6 +111,43 @@ int getEventGameRotationVector(sensors_event_t *data_single, int serial) {
     data_single->version = (int32_t) sizeof(struct sensors_event_t);
     data_single->sensor = (int32_t) PURESTUB_SENSORS_GAMEROTATIONVECTOR_HANDLE;
     data_single->type = SENSOR_TYPE_GAME_ROTATION_VECTOR;
+    clock_gettime(CLOCK_REALTIME, &t_spec);
+    sec = t_spec.tv_sec;
+    ns = t_spec.tv_nsec;
+    all = (uint64_t) sec * _BILLION + (uint64_t) ns;
+    //data_single->timestamp = (int64_t) all;
+    data_single->timestamp = 0;
+    /* Explicitly provide two sets of different data
+     * in order to trigger acceleration data change */
+    if (ns % 2 == 0) {
+        data_single->data[0] = 1.0f;
+        data_single->data[1] = 0.0f;
+        data_single->data[2] = 0.0f;
+        data_single->data[3] = 0.0f;
+    } else {
+        data_single->data[0] = 0.0f;
+        data_single->data[1] = 1.0f;
+        data_single->data[2] = 0.0f;
+        data_single->data[3] = 0.5f;
+    }
+    data_single->data[4] = 0.0f;
+    return 0;
+}
+
+int getEventRotationVector(sensors_event_t *data_single, int serial) {
+    struct timespec t_spec = {};
+    uint64_t all;
+    long int ns;
+    time_t sec;
+
+    if (data_single == NULL) {
+        return -EINVAL;
+    }
+
+    /* Fill in sensor data first */
+    data_single->version = (int32_t) sizeof(struct sensors_event_t);
+    data_single->sensor = (int32_t) PURESTUB_SENSORS_ROTATIONVECTOR_HANDLE;
+    data_single->type = SENSOR_TYPE_ROTATION_VECTOR;
     clock_gettime(CLOCK_REALTIME, &t_spec);
     sec = t_spec.tv_sec;
     ns = t_spec.tv_nsec;
