@@ -47,7 +47,25 @@ static struct sensor_t sSensorsList[] = {
         (GRAVITY_EARTH * 16.0f),               // float       maxRange;
         (GRAVITY_EARTH * 16.0f) / 4096.0f,     // float       resolution;
         0.0001f,                               // float       power;
-        10000,                                 // int32_t     minDelay;    // in ms
+        1000,                                  // int32_t     minDelay;    // in ms
+        0,                                     // uint32_t    fifoReservedEventCount; // TODO
+        0,                                     // uint32_t    fifoMaxEventCount;      // TODO
+        0,                                     // const char* stringType;             // TODO
+        0,                                     // const char* requiredPermission;
+        0,                                     // int??_t     maxDelay;               // TODO
+        0,                                     // uint??_t    flags;                  // TODO
+        { 0 },
+    },
+    {
+        "Pure Stub Custom Game Rotation Sensor",   // const char* name;
+        "University of Pittsburgh",            // const char* vendor;
+        1,                                     // int         version,
+        PURESTUB_SENSORS_GAMEROTATIONVECTOR_HANDLE,  // int         handle;
+        SENSOR_TYPE_GAME_ROTATION_VECTOR,             // int         type;
+        (1.0f),                                // float       maxRange;
+        (0.000005f),                           // float       resolution;
+        0.0002f,                               // float       power;
+        100,                                   // int32_t     minDelay;    // in ms
         0,                                     // uint32_t    fifoReservedEventCount; // TODO
         0,                                     // uint32_t    fifoMaxEventCount;      // TODO
         0,                                     // const char* stringType;             // TODO
@@ -150,8 +168,7 @@ struct sensors_poll_context_t {
 private:
     bool mInitialized;
     bool mAccelerometerEnabled;
-
-    bool mIfGyroOut;
+    int mPoolSeq;
 };
 
 sensors_poll_context_t::sensors_poll_context_t() {
@@ -159,7 +176,7 @@ sensors_poll_context_t::sensors_poll_context_t() {
     // TODO init works
     mAccelerometerEnabled = false;
     mInitialized = true;
-    mIfGyroOut = true;
+    mPoolSeq = 0;
 }
 
 sensors_poll_context_t::~sensors_poll_context_t() {
@@ -213,12 +230,17 @@ int sensors_poll_context_t::pollEvents(sensors_event_t *data, int count) {
         // Struct of sensors_event_t is defined at
         // https://android.googlesource.com/platform/hardware/libhardware/+/master/include/hardware/sensors.h
         // XXX: Now we only return 1 event per call of pollEvents.
-        if (mIfGyroOut) {
+        if (mPoolSeq == 0) {
             result = getEventGyroscope(&event_result, i);
-        } else {
+        } else if (mPoolSeq == 1) {
             result = getEventAccelerometer(&event_result, i);
+        } else if (mPoolSeq == 2) {
+            result = getEventGameRotationVector(&event_result, i);
         }
-        mIfGyroOut = ! mIfGyroOut;
+        mPoolSeq += 1;
+        if (mPoolSeq >= sensors) {
+            mPoolSeq = 0;
+        }
 
         if (result == 0) {
             numEvents += 1;
